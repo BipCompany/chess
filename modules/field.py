@@ -11,13 +11,15 @@ from modules.king import King
 
 
 class Field:
-    def __init__(self) -> None:
+    def __init__(self, setup: bool = True) -> None:
         self.board: list[list[None | Piece]] = [[None] * 8 for _ in range(8)]
         self.captured_white = []
         self.captured_black = []
         self.turn = WHITE
         self.en_passant_target = None
         self._checking_attack = False
+        if setup:
+            self.setup()
 
     def get_board(self) -> list[list[None | Piece]]:
         return self.board
@@ -25,7 +27,9 @@ class Field:
     def change_turn(self) -> None:
         self.turn = self.turn ^ 1
 
-    def start_position(self) -> None:
+    def setup(self) -> None:
+        self.turn = WHITE
+        
         # pawns
         for i in range(8):
             self.place_piece(Pawn(self, WHITE), 6, i)

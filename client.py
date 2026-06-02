@@ -8,18 +8,6 @@ from modules.constants import BLACK, WHITE
 from modules.field import Field
 
 
-def draw_board(board) -> None:
-    print("    a    b    c    d    e    f    g    h")
-    for i in range(8):
-        print("  " + "+----" * 8 + "+")
-        print(i + 1, end=" ")
-        for j in range(8):
-            piece_char = board[i][j]
-            print("| " + piece_char + " ", end="")
-        print("|")
-    print("  " + "+----" * 8 + "+")
-
-
 def clear_terminal() -> None:
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -42,31 +30,47 @@ class Chess:
             ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],  # Row 6: White pawns
             ['wr', 'wk', 'wb', 'wq', 'wK', 'wb', 'wk', 'wr']   # Row 7: White major pieces (bottom)
         ]
-        self.message = ""
+        self.message = "Connecting..."
         self.color = None
         self.moved = False
         self.game_over = False
 
         self.socket = None
 
+    def draw_board(self) -> None:
+        if self.color == BLACK:
+            row_col_range = range(7, -1, -1)
+            print("    h    g    f    e    d    c    b    a")
+        else:
+            row_col_range = range(8)
+            print("    a    b    c    d    e    f    g    h")
+        for i in row_col_range:
+            print("  " + "+----" * 8 + "+")
+            print(i + 1, end=" ")
+            for j in row_col_range:
+                piece_char = self.board[i][j]
+                print("| " + piece_char + " ", end="")
+            print("|")
+        print("  " + "+----" * 8 + "+")
+    
     def deserialize(self, data):
-      fmt_size = struct.calcsize("<B?B128s50s")
-      offset = 0
-      while offset + fmt_size <= len(data):
-        turn, game_over, color, board_bytes, message_bytes = struct.unpack_from("<B?B128s50s", data, offset)
-        self.turn = turn
-        if self.turn == self.color:
-          self.moved = False
-        self.game_over = game_over
-        self.color = color
-        board_string = board_bytes.decode("utf-8")
-        new_board = [["  "] * 8 for _ in range(8)]
-        for row in range(8):
-          for col in range(8):
-            new_board[row][col] = board_string[row * 16 + col * 2] + board_string[row * 16 + col * 2 + 1]
-        self.board = new_board
-        self.message = message_bytes.decode("utf-8").rstrip("\x00")
-        offset += fmt_size
+          fmt_size = struct.calcsize("<B?B128s50s")
+          offset = 0
+          while offset + fmt_size <= len(data):
+            turn, game_over, color, board_bytes, message_bytes = struct.unpack_from("<B?B128s50s", data, offset)
+            self.turn = turn
+            if self.turn == self.color:
+              self.moved = False
+            self.game_over = game_over
+            self.color = color
+            board_string = board_bytes.decode("utf-8")
+            new_board = [["  "] * 8 for _ in range(8)]
+            for row in range(8):
+              for col in range(8):
+                new_board[row][col] = board_string[row * 16 + col * 2] + board_string[row * 16 + col * 2 + 1]
+            self.board = new_board
+            self.message = message_bytes.decode("utf-8").rstrip("\x00")
+            offset += fmt_size
   
     def run_listener(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -92,7 +96,7 @@ class Chess:
         threading.Thread(target=self.run_listener).start()
         while True:
             clear_terminal()
-            draw_board(self.board)
+            self.draw_board()
             print(self.message)
             if self.game_over:
                 self.kill = True
@@ -100,6 +104,11 @@ class Chess:
             if self.color is None or self.turn is None:
               time.sleep(0.01)
               continue
+            # If waiting or opponent disconnected, just show message and wait
+            if "Waiting for opponent" in self.message or "disconnected" in self.message:
+              time.sleep(0.01)
+              continue
+
             print("White's turn" if self.turn == WHITE else "Black's turn")
             if self.turn != self.color or self.moved:
               time.sleep(0.01)

@@ -14,7 +14,6 @@ from modules.constants import WHITE, BLACK
 
 def test_start_position():
     f = Field()
-    f.start_position()
     b = f.get_board()
     # Back rank piece types
     assert isinstance(b[0][0], Rook) and b[0][0].get_color() == BLACK
@@ -29,7 +28,7 @@ def test_start_position():
 
 
 def test_bishop_movement():
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     # Place bishop in center
     bishop = Bishop(f, WHITE)
@@ -49,7 +48,7 @@ def test_bishop_movement():
 
 
 def test_queen_movement():
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     queen = Queen(f, WHITE)
     queen.place(4, 4)
@@ -67,7 +66,7 @@ def test_queen_movement():
 
 
 def test_king_movement():
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     king = King(f, WHITE)
     king.place(4, 4)
@@ -86,7 +85,7 @@ def test_king_movement():
 
 def test_king_safety():
     """Moving a piece that leaves own king in check should be rejected."""
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     king = King(f, WHITE)
     king.place(0, 4)
@@ -105,7 +104,7 @@ def test_king_safety():
 
 def test_check_detection():
     """Simple check scenario."""
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     king = King(f, WHITE)
     king.place(0, 4)
@@ -118,7 +117,7 @@ def test_check_detection():
 
 def test_checkmate():
     """Back-rank checkmate."""
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     king = King(f, WHITE)
     king.place(0, 4)
@@ -136,7 +135,7 @@ def test_checkmate():
 
 def test_promotion():
     """Pawn reaching rank 0 promotes to queen."""
-    f = Field()
+    f = Field(setup=False)
     f.turn = WHITE
     pawn = Pawn(f, WHITE)
     pawn.place(1, 0)
@@ -151,7 +150,7 @@ def test_promotion():
 
 def test_black_promotion():
     """Black pawn reaching rank 7 promotes to queen."""
-    f = Field()
+    f = Field(setup=False)
     f.turn = BLACK
     pawn = Pawn(f, BLACK)
     pawn.place(6, 0)

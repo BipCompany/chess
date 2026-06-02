@@ -7,7 +7,7 @@ from modules.pawn import Pawn
 from modules.constants import WHITE, BLACK
 
 # --- Rook line-of-sight ---
-f0 = Field()
+f0 = Field(setup=False)
 r = Rook(f0, WHITE)
 r.place(7, 0)
 f0.turn = WHITE
@@ -23,7 +23,7 @@ assert not moved, "Rook should be blocked"
 print("Rook line-of-sight OK")
 
 # --- En passant ---
-f = Field()
+f = Field(setup=False)
 f.turn = BLACK
 f.board[1][0] = None
 f.board[1][1] = None

@@ -3,7 +3,6 @@ import sys
 sys.path.insert(0, '/Users/lebronjames/Documents/lyceum/chess')
 from modules.field import Field
 f = Field()
-f.start_position()
 # White pawn e2->e4
 r = f.move_piece(0, 6, 4, 4, 4)
 assert r == "" or r == "Check!", f"e2e4 failed: {r}"
