@@ -18,6 +18,7 @@ class Field:
         self.turn = WHITE
         self.en_passant_target = None
         self._checking_attack = False
+        self.move_history: list[str] = []
         if setup:
             self.setup()
 
@@ -157,6 +158,27 @@ class Field:
         # --- Mark pawn first_move as false ---
         if isinstance(piece, Pawn):
             piece.first_move = False
+
+        # --- Record move history ---
+        # Determine piece letter for notation (standard: K/Q/R/B/N/P, lowercase for black)
+        internal_char = piece.char
+        if internal_char == 'k':  # Knight — use 'N'/'n' to avoid confusion with King
+            piece_letter = 'N' if piece.get_color() == WHITE else 'n'
+        elif internal_char == 'K':  # King
+            piece_letter = 'K' if piece.get_color() == WHITE else 'k'
+        elif internal_char == 'q':
+            piece_letter = 'Q' if piece.get_color() == WHITE else 'q'
+        elif internal_char == 'r':
+            piece_letter = 'R' if piece.get_color() == WHITE else 'r'
+        elif internal_char == 'b':
+            piece_letter = 'B' if piece.get_color() == WHITE else 'b'
+        else:  # Pawn
+            piece_letter = 'P' if piece.get_color() == WHITE else 'p'
+        files = "abcdefgh"
+        move_notation = f"{piece_letter}{files[col1]}{8 - row1}{files[col2]}{8 - row2}"
+        if isinstance(piece, Pawn) and (row2 == 0 or row2 == 7):
+            move_notation += "=Q"
+        self.move_history.append(move_notation)
 
         self.change_turn()
 
