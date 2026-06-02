@@ -5,13 +5,13 @@ from modules.field import Field
 f = Field()
 f.start_position()
 # White pawn e2->e4
-r = f.move_piece(6, 4, 4, 4)
+r = f.move_piece(0, 6, 4, 4, 4)
 assert r == "" or r == "Check!", f"e2e4 failed: {r}"
 # Black pawn e7->e5
-r = f.move_piece(1, 4, 3, 4)
+r = f.move_piece(1, 1, 4, 3, 4)
 assert r == "" or r == "Check!", f"e7e5 failed: {r}"
 # White bishop f1->b5 (Italian)
-r = f.move_piece(7, 5, 4, 2)
+r = f.move_piece(0, 7, 5, 4, 2)
 assert r == "" or r == "Check!", f"Bf1b5 failed: {r}"
 # White king safety — moving knight that blocks bishop? no, bishop already moved
 # Just verify we can query the board

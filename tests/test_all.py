@@ -98,7 +98,7 @@ def test_king_safety():
     bishop.place(3, 1)  # Attacks (0,4) via diagonal, but pawn at (1,3) blocks
 
     # Move pawn out of the way — should be rejected
-    result = f.move_piece(1, 3, 2, 3)
+    result = f.move_piece(0, 1, 3, 2, 3)
     assert result == "Can't leave king in check", f"Expected king safety error, got: {result}"
     print("test_king_safety OK")
 
@@ -142,7 +142,7 @@ def test_promotion():
     pawn.place(1, 0)
     pawn.first_move = False
 
-    result = f.move_piece(1, 0, 0, 0)
+    result = f.move_piece(0, 1, 0, 0, 0)
     promoted = f.board[0][0]
     assert isinstance(promoted, Queen), f"Pawn should promote to Queen, got {type(promoted).__name__}"
     assert promoted.get_color() == WHITE, "Promoted queen should be white"
@@ -157,7 +157,7 @@ def test_black_promotion():
     pawn.place(6, 0)
     pawn.first_move = False
 
-    result = f.move_piece(6, 0, 7, 0)
+    result = f.move_piece(1, 6, 0, 7, 0)
     promoted = f.board[7][0]
     assert isinstance(promoted, Queen), "Black pawn should promote to Queen"
     assert promoted.get_color() == BLACK

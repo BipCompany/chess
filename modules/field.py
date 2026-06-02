@@ -12,7 +12,7 @@ from modules.king import King
 
 class Field:
     def __init__(self) -> None:
-        self.board: list[list[None | Piece]] = [[None] * 8 for i in range(8)]
+        self.board: list[list[None | Piece]] = [[None] * 8 for _ in range(8)]
         self.captured_white = []
         self.captured_black = []
         self.turn = WHITE
@@ -62,7 +62,9 @@ class Field:
             return True
         return False
 
-    def move_piece(self, row1, col1, row2, col2) -> str:
+    def move_piece(self, player_id, row1, col1, row2, col2) -> str:
+        if player_id != self.turn:
+          return ""
         piece = self.board[row1][col1]
         if not piece:
             return "No piece in cell"
